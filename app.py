@@ -17,6 +17,7 @@ page = st.sidebar.selectbox(
         "🏠 Home",
         "🤖 AI Assistant",
         "📚 Heart Health Awareness",
+        "🩺 Symptom Checker",
         "🚨 Emergency Information"
     ]
 )
@@ -40,7 +41,8 @@ if page == "🏠 Home":
 
     st.success(
         "Use the sidebar menu to explore the AI Assistant, "
-        "Heart Health Awareness, and Emergency Information."
+        "Heart Health Awareness, Symptom Checker, "
+        "and Emergency Information."
     )
 
 
@@ -130,17 +132,109 @@ elif page == "📚 Heart Health Awareness":
     )
 
 
+# Symptom Checker
+elif page == "🩺 Symptom Checker":
+
+    st.title("🩺 Heart Symptom Checker")
+
+    st.write(
+        "Select the symptoms you are experiencing. "
+        "This tool provides general educational guidance "
+        "and does not diagnose medical conditions."
+    )
+
+    chest_pain = st.checkbox(
+        "Chest discomfort or chest pain"
+    )
+
+    breathing = st.checkbox(
+        "Severe difficulty breathing"
+    )
+
+    fainting = st.checkbox(
+        "Fainting or loss of consciousness"
+    )
+
+    dizziness = st.checkbox(
+        "Severe dizziness"
+    )
+
+    weakness = st.checkbox(
+        "Sudden weakness"
+    )
+
+    palpitations = st.checkbox(
+        "Fast, pounding, or irregular heartbeat"
+    )
+
+    if st.button("Check Symptoms"):
+
+        emergency_symptoms = (
+            chest_pain
+            or breathing
+            or fainting
+            or weakness
+        )
+
+        if emergency_symptoms:
+
+            st.error(
+                "🚨 Some selected symptoms can require urgent medical attention."
+            )
+
+            st.write(
+                "Please seek immediate medical help, especially if "
+                "the symptoms are severe, sudden, or getting worse."
+            )
+
+        elif dizziness or palpitations:
+
+            st.warning(
+                "⚠️ These symptoms can have many possible causes. "
+                "Consider discussing them with a qualified healthcare professional, "
+                "especially if they are new, persistent, or worsening."
+            )
+
+        else:
+
+            st.info(
+                "No urgent warning was triggered by the selected symptoms. "
+                "If you are concerned about your health or symptoms continue, "
+                "contact a healthcare professional."
+            )
+
+
 # Emergency Information
 elif page == "🚨 Emergency Information":
 
     st.title("🚨 Emergency Information")
 
-    st.warning(
-        "If someone has severe or sudden symptoms, "
-        "seek immediate emergency medical help."
-    )
+    st.subheader("⚠️ When to Seek Emergency Medical Help")
 
     st.write(
-        "Examples of concerning symptoms may include severe chest "
-        "discomfort, severe difficulty breathing, fainting, or sudden weakness."
+        "Seek immediate emergency medical help if someone develops "
+        "severe or sudden symptoms that may indicate a serious medical problem."
+    )
+
+    st.warning(
+        "🚨 Concerning symptoms can include:"
+    )
+
+    st.markdown("""
+    - Severe or sudden chest discomfort
+    - Severe difficulty breathing
+    - Fainting or loss of consciousness
+    - Sudden weakness or difficulty speaking
+    - Sudden severe dizziness
+    - Symptoms that are rapidly getting worse
+    """)
+
+    st.error(
+        "If you think someone may be experiencing a medical emergency, "
+        "contact your local emergency medical service immediately."
+    )
+
+    st.info(
+        "This page provides general emergency awareness information. "
+        "It is not a substitute for professional medical assessment."
     )
