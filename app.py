@@ -26,9 +26,7 @@ if page == "🏠 Home":
 
     st.title("🫀 Welcome to Cardiac Care App")
 
-    st.subheader(
-        "Your Heart Health Information Assistant"
-    )
+    st.subheader("Your Heart Health Information Assistant")
 
     st.write(
         "Learn about heart health, understand common symptoms, "
@@ -95,9 +93,40 @@ elif page == "📚 Heart Health Awareness":
 
     st.title("📚 Heart Health Awareness")
 
+    st.subheader("❤️ What is the Heart?")
+
     st.write(
-        "Learn general information about heart health, "
-        "heart diseases, symptoms, risk factors and prevention."
+        "The heart is a muscular organ that pumps blood throughout "
+        "the body. It supplies oxygen and nutrients to tissues "
+        "and removes waste products."
+    )
+
+    st.subheader("⚠️ Common Heart Problems")
+
+    st.write(
+        "Some common heart-related conditions include coronary "
+        "artery disease, heart failure, arrhythmias, and heart valve problems."
+    )
+
+    st.subheader("🩺 Common Risk Factors")
+
+    st.write(
+        "Important risk factors can include high blood pressure, "
+        "high cholesterol, diabetes, smoking, physical inactivity, "
+        "and a family history of heart disease."
+    )
+
+    st.subheader("🥗 Heart-Healthy Habits")
+
+    st.write(
+        "Healthy habits include eating a balanced diet, staying "
+        "physically active, getting adequate sleep, avoiding tobacco, "
+        "and having regular health check-ups."
+    )
+
+    st.info(
+        "This information is for education and awareness only "
+        "and should not be used to diagnose or treat a medical condition."
     )
 
 
@@ -112,7 +141,6 @@ elif page == "🚨 Emergency Information":
     )
 
     st.write(
-        "Examples of concerning symptoms may include "
-        "severe chest discomfort, severe difficulty breathing, "
-        "fainting, or sudden weakness."
+        "Examples of concerning symptoms may include severe chest "
+        "discomfort, severe difficulty breathing, fainting, or sudden weakness."
     )
