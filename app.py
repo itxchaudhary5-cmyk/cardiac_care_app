@@ -1,21 +1,63 @@
 import streamlit as st
 from groq import Groq
 
+# -----------------------------
+# Page Configuration
+# -----------------------------
 st.set_page_config(
     page_title="Cardiac Care App",
     page_icon="🫀",
     layout="centered"
 )
 
-client = Groq(
-    api_key=st.secrets["GROQ_API_KEY"]
+# -----------------------------
+# Groq Client
+# -----------------------------
+client = Groq(api_key=st.secrets["GROQ_API_KEY"])
+
+# -----------------------------
+# Custom UI
+# -----------------------------
+st.markdown(
+    """
+    <style>
+    .main-title {
+        text-align: center;
+        font-size: 42px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .subtitle {
+        text-align: center;
+        font-size: 18px;
+        margin-bottom: 25px;
+    }
+
+    .info-box {
+        padding: 18px;
+        border-radius: 12px;
+        border: 1px solid #ddd;
+        margin: 10px 0;
+    }
+
+    .emergency-box {
+        padding: 20px;
+        border-radius: 12px;
+        border: 2px solid #d9534f;
+        margin: 15px 0;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
 )
 
-# Sidebar
+# -----------------------------
+# Sidebar Navigation
+# -----------------------------
 st.sidebar.title("🫀 Cardiac Care")
-st.sidebar.caption("Heart Health Assistant")
 
-page = st.sidebar.selectbox(
+page = st.sidebar.radio(
     "Navigate",
     [
         "🏠 Home",
@@ -26,250 +68,340 @@ page = st.sidebar.selectbox(
     ]
 )
 
-st.sidebar.markdown("---")
-st.sidebar.caption(
-    "Educational information only. "
-    "Not a substitute for professional medical care."
-)
-
-# Home
+# -----------------------------
+# HOME
+# -----------------------------
 if page == "🏠 Home":
 
-    st.title("🫀 Cardiac Care App")
-    st.subheader("Your Heart Health Information Assistant")
+    st.markdown(
+        '<div class="main-title">🫀 Cardiac Care App</div>',
+        unsafe_allow_html=True
+    )
 
-    st.write(
-        "Learn about heart health, understand common symptoms, "
-        "and explore educational cardiac information."
+    st.markdown(
+        '<div class="subtitle">Heart Health Awareness & Educational Assistant</div>',
+        unsafe_allow_html=True
     )
 
     st.info(
-        "⚠️ This app provides educational information only. "
-        "It does not diagnose diseases or replace professional medical care."
+        "⚠️ This app is for educational and awareness purposes only. "
+        "It does not replace a qualified healthcare professional."
     )
 
-    st.markdown("### Explore the App")
+    st.markdown("## 🌟 Explore the App")
 
     col1, col2 = st.columns(2)
 
     with col1:
-        st.write("🤖 **AI Assistant**")
-        st.write("Ask questions about heart health.")
+        st.markdown("### 🤖 AI Assistant")
+        st.write(
+            "Ask educational questions about the heart, cardiac health, "
+            "symptoms, risk factors and prevention."
+        )
 
     with col2:
-        st.write("🩺 **Symptom Checker**")
-        st.write("Review selected symptoms for general guidance.")
+        st.markdown("### 🩺 Symptom Checker")
+        st.write(
+            "Review selected symptoms and receive general safety guidance."
+        )
 
     st.markdown("---")
 
+    st.markdown("### 💡 Important")
     st.write(
-        "Use the menu on the left to explore all available features."
+        "If someone has severe or rapidly worsening symptoms, "
+        "do not rely on this app. Seek urgent medical help."
     )
 
 
-# AI Assistant
+# -----------------------------
+# AI ASSISTANT
+# -----------------------------
 elif page == "🤖 AI Assistant":
 
     st.title("🤖 AI Heart Health Assistant")
 
     st.write(
-        "Ask a question about heart health and receive "
-        "general educational information."
+        "Ask a question about heart health, symptoms, risk factors, "
+        "prevention, or general cardiac awareness."
     )
 
-    question = st.text_input(
+    st.warning(
+        "⚠️ This assistant provides educational information only. "
+        "It cannot diagnose medical conditions or prescribe treatment."
+    )
+
+    question = st.text_area(
         "Ask your question:",
         placeholder="Example: What are common symptoms of heart problems?"
     )
 
-    if st.button("Ask AI"):
+    if st.button("Ask AI", use_container_width=True):
 
-        if question:
-
-            try:
-
-                with st.spinner("Getting information..."):
-
-                    response = client.chat.completions.create(
-                        model="openai/gpt-oss-20b",
-                        messages=[
-                            {
-                                "role": "system",
-                                "content": (
-                                    "You are a heart health educational assistant. "
-                                    "Provide clear, simple and safe health information. "
-                                    "Do not diagnose diseases or prescribe treatment. "
-                                    "If symptoms could indicate a medical emergency, "
-                                    "clearly advise the user to seek immediate medical care."
-                                )
-                            },
-                            {
-                                "role": "user",
-                                "content": question
-                            }
-                        ]
-                    )
-
-                st.success("AI Response")
-                st.write(
-                    response.choices[0].message.content
-                )
-
-            except Exception:
-
-                st.error(
-                    "Sorry, the AI service is temporarily unavailable. "
-                    "Please try again later."
-                )
+        if not question.strip():
+            st.warning("Please enter a question first.")
 
         else:
 
-            st.warning(
-                "Please enter a question first."
+            # Emergency keyword check
+            emergency_words = [
+                "severe chest pain",
+                "chest pain and difficulty breathing",
+                "chest pain and shortness of breath",
+                "difficulty breathing",
+                "can't breathe",
+                "cannot breathe",
+                "fainting",
+                "passed out",
+                "loss of consciousness",
+                "severe breathing problem"
+            ]
+
+            question_lower = question.lower()
+
+            emergency_detected = any(
+                word in question_lower
+                for word in emergency_words
             )
 
+            if emergency_detected:
 
-# Heart Health Awareness
+                st.error("🚨 Possible Medical Emergency")
+
+                st.markdown(
+                    """
+                    **Severe chest pain, serious breathing difficulty, fainting,
+                    or similar symptoms can require immediate medical attention.**
+
+                    Please **seek emergency medical help immediately** and do
+                    not wait for the AI response or rely on this app.
+
+                    If you are in Pakistan, contact your local emergency
+                    medical service or go to the nearest emergency department.
+                    """
+                )
+
+            else:
+
+                try:
+
+                    with st.spinner("Thinking..."):
+
+                        response = client.chat.completions.create(
+                            model="openai/gpt-oss-20b",
+                            messages=[
+                                {
+                                    "role": "system",
+                                    "content": """
+You are a heart health educational assistant.
+
+Your purpose is to provide general, easy-to-understand educational
+information about heart health.
+
+Important rules:
+
+1. Do not diagnose the user.
+2. Do not prescribe medicines or treatment.
+3. Do not provide medication doses.
+4. If the user describes potentially serious or emergency symptoms,
+   clearly advise them to seek immediate medical help.
+5. For severe chest pain, severe difficulty breathing, fainting,
+   loss of consciousness, or rapidly worsening symptoms, tell the
+   user not to wait for the AI and to seek emergency medical care.
+6. Keep answers clear, calm and educational.
+7. Encourage consultation with a qualified healthcare professional
+   when appropriate.
+"""
+                                },
+                                {
+                                    "role": "user",
+                                    "content": question
+                                }
+                            ]
+                        )
+
+                    st.markdown("### 🫀 AI Response")
+                    st.write(response.choices[0].message.content)
+
+                except Exception as e:
+
+                    st.error(
+                        "Sorry, something went wrong while connecting "
+                        "to the AI service."
+                    )
+
+                    st.caption(str(e))
+
+
+# -----------------------------
+# HEART HEALTH AWARENESS
+# -----------------------------
 elif page == "📚 Heart Health Awareness":
 
     st.title("📚 Heart Health Awareness")
 
-    st.subheader("❤️ What is the Heart?")
+    with st.expander("🫀 What is the Heart?"):
+        st.write(
+            "The heart is a muscular organ that pumps blood throughout "
+            "the body. Blood carries oxygen and nutrients to tissues "
+            "and removes waste products."
+        )
 
-    st.write(
-        "The heart is a muscular organ that pumps blood throughout "
-        "the body and helps deliver oxygen and nutrients to tissues."
-    )
+    with st.expander("❤️ Common Heart Problems"):
+        st.write(
+            """
+            • Coronary artery disease  
+            • Heart failure  
+            • Heart rhythm problems  
+            • Heart valve diseases  
+            • Congenital heart conditions
+            """
+        )
 
-    st.subheader("⚠️ Common Heart Problems")
+    with st.expander("⚠️ Common Risk Factors"):
+        st.write(
+            """
+            • High blood pressure  
+            • High cholesterol  
+            • Smoking  
+            • Physical inactivity  
+            • Unhealthy diet  
+            • Diabetes  
+            • Family history
+            """
+        )
 
-    st.write(
-        "Common heart-related conditions include coronary artery disease, "
-        "heart failure, arrhythmias, and heart valve problems."
-    )
-
-    st.subheader("🩺 Common Risk Factors")
-
-    st.write(
-        "Risk factors can include high blood pressure, high cholesterol, "
-        "diabetes, smoking, physical inactivity, and family history."
-    )
-
-    st.subheader("🥗 Heart-Healthy Habits")
-
-    st.write(
-        "Healthy habits include a balanced diet, regular physical activity, "
-        "adequate sleep, avoiding tobacco, and regular health check-ups."
-    )
-
-    st.info(
-        "This information is for education and awareness only."
-    )
+    with st.expander("🌱 Heart-Healthy Habits"):
+        st.write(
+            """
+            • Eat a balanced diet  
+            • Stay physically active in a healthy way  
+            • Avoid smoking and tobacco  
+            • Get adequate sleep  
+            • Manage stress  
+            • Have regular health checkups
+            """
+        )
 
 
-# Symptom Checker
+# -----------------------------
+# SYMPTOM CHECKER
+# -----------------------------
 elif page == "🩺 Symptom Checker":
 
-    st.title("🩺 Heart Symptom Checker")
+    st.title("🩺 Symptom Checker")
 
-    st.write(
-        "Select the symptoms you are experiencing. "
-        "This tool provides general educational guidance "
-        "and does not diagnose medical conditions."
+    st.warning(
+        "⚠️ This checker provides general safety guidance only. "
+        "It does not diagnose a medical condition."
     )
 
-    chest_pain = st.checkbox(
-        "Chest discomfort or chest pain"
-    )
+    st.write("Select any symptoms you are experiencing:")
 
-    breathing = st.checkbox(
-        "Severe difficulty breathing"
-    )
-
-    fainting = st.checkbox(
-        "Fainting or loss of consciousness"
-    )
-
-    dizziness = st.checkbox(
-        "Severe dizziness"
-    )
-
-    weakness = st.checkbox(
-        "Sudden weakness"
-    )
-
-    palpitations = st.checkbox(
+    chest_pain = st.checkbox("Chest discomfort or chest pain")
+    breathing = st.checkbox("Severe difficulty breathing")
+    fainting = st.checkbox("Fainting or loss of consciousness")
+    dizziness = st.checkbox("Severe dizziness")
+    weakness = st.checkbox("Sudden weakness")
+    heartbeat = st.checkbox(
         "Fast, pounding, or irregular heartbeat"
     )
 
-    if st.button("Check Symptoms"):
+    if st.button("Check Symptoms", use_container_width=True):
 
-        emergency_symptoms = (
+        emergency = (
             chest_pain
             or breathing
             or fainting
             or weakness
         )
 
-        if emergency_symptoms:
+        warning = (
+            dizziness
+            or heartbeat
+        )
 
-            st.error(
-                "🚨 Some selected symptoms can require urgent medical attention."
+        if emergency:
+
+            st.error("🚨 Seek Immediate Medical Help")
+
+            st.write(
+                "Some of the selected symptoms may require urgent "
+                "medical assessment. Please seek emergency medical "
+                "help immediately, especially if symptoms are severe "
+                "or getting worse."
             )
 
             st.write(
-                "Please seek immediate medical help, especially if "
-                "the symptoms are severe, sudden, or getting worse."
+                "Do not rely on this app to determine the cause "
+                "of your symptoms."
             )
 
-        elif dizziness or palpitations:
+        elif warning:
 
-            st.warning(
-                "⚠️ These symptoms can have many possible causes. "
-                "Consider discussing them with a qualified healthcare "
-                "professional, especially if they are new, persistent, "
-                "or worsening."
+            st.warning("⚠️ Medical Evaluation May Be Appropriate")
+
+            st.write(
+                "These symptoms can have many possible causes. "
+                "If they are new, persistent, severe, or concerning, "
+                "talk to a qualified healthcare professional."
             )
 
         else:
 
             st.info(
-                "No urgent warning was triggered by the selected symptoms. "
-                "If you are concerned or symptoms continue, contact a "
-                "healthcare professional."
+                "ℹ️ No emergency warning was triggered by the "
+                "symptoms selected. This does not rule out a health problem."
             )
 
 
-# Emergency Information
+# -----------------------------
+# EMERGENCY INFORMATION
+# -----------------------------
 elif page == "🚨 Emergency Information":
 
     st.title("🚨 Emergency Information")
 
-    st.subheader("⚠️ When to Seek Emergency Medical Help")
+    st.error(
+        "If you think you or someone else may be experiencing "
+        "a medical emergency, seek emergency medical help immediately."
+    )
+
+    st.markdown("### ⚠️ Concerning Symptoms")
 
     st.write(
-        "Seek immediate emergency medical help if someone develops "
-        "severe or sudden symptoms that may indicate a serious medical problem."
+        """
+        • Severe or concerning chest pain/discomfort  
+        • Severe difficulty breathing  
+        • Fainting or loss of consciousness  
+        • Sudden severe weakness  
+        • Rapidly worsening symptoms  
+        """
     )
 
-    st.warning("🚨 Concerning symptoms can include:")
+    st.markdown("### 🏥 What Should You Do?")
 
-    st.markdown("""
-    - Severe or sudden chest discomfort
-    - Severe difficulty breathing
-    - Fainting or loss of consciousness
-    - Sudden weakness
-    - Difficulty speaking
-    - Sudden severe dizziness
-    - Symptoms that are rapidly getting worse
-    """)
+    st.write(
+        """
+        Seek immediate medical attention and contact your local
+        emergency medical service or go to the nearest emergency
+        department.
 
-    st.error(
-        "If you think someone may be experiencing a medical emergency, "
-        "contact your local emergency medical service immediately."
+        Do not wait for this app or an AI assistant to determine
+        whether the situation is serious.
+        """
     )
 
-    st.info(
-        "This page provides general emergency awareness information "
-        "and is not a substitute for professional medical assessment."
+    st.warning(
+        "This application is an educational awareness tool and "
+        "is not a substitute for emergency medical care."
     )
+
+# -----------------------------
+# Footer
+# -----------------------------
+st.markdown("---")
+
+st.caption(
+    "🫀 Cardiac Care App | Heart Health Education & Awareness"
+)
