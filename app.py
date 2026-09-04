@@ -59,29 +59,38 @@ elif page == "🤖 AI Assistant":
 
         if question:
 
-            response = client.chat.completions.create(
-                model="openai/gpt-oss-20b",
-                messages=[
-                    {
-                        "role": "system",
-                        "content": (
-                            "You are a heart health educational assistant. "
-                            "Provide clear, simple and safe health information. "
-                            "Do not diagnose diseases. "
-                            "If symptoms could indicate a medical emergency, "
-                            "clearly advise the user to seek immediate medical care."
-                        )
-                    },
-                    {
-                        "role": "user",
-                        "content": question
-                    }
-                ]
-            )
+            try:
 
-            st.write(
-                response.choices[0].message.content
-            )
+                response = client.chat.completions.create(
+                    model="openai/gpt-oss-20b",
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": (
+                                "You are a heart health educational assistant. "
+                                "Provide clear, simple and safe health information. "
+                                "Do not diagnose diseases. "
+                                "If symptoms could indicate a medical emergency, "
+                                "clearly advise the user to seek immediate medical care."
+                            )
+                        },
+                        {
+                            "role": "user",
+                            "content": question
+                        }
+                    ]
+                )
+
+                st.write(
+                    response.choices[0].message.content
+                )
+
+            except Exception:
+
+                st.error(
+                    "Sorry, the AI service is temporarily unavailable. "
+                    "Please try again later."
+                )
 
         else:
 
