@@ -10,6 +10,7 @@ client = Groq(
     api_key=st.secrets["GROQ_API_KEY"]
 )
 
+# Sidebar Navigation
 page = st.sidebar.selectbox(
     "Menu",
     [
@@ -20,20 +21,32 @@ page = st.sidebar.selectbox(
     ]
 )
 
+# Home Page
 if page == "🏠 Home":
 
-    st.title("🫀 Cardiac Care App")
+    st.title("🫀 Welcome to Cardiac Care App")
+
+    st.subheader(
+        "Your Heart Health Information Assistant"
+    )
 
     st.write(
-        "Welcome to Cardiac Care App"
+        "Learn about heart health, understand common symptoms, "
+        "and get educational information about cardiac care."
     )
 
     st.info(
-        "This app provides educational information only. "
-        "It does not diagnose or replace professional medical care."
+        "⚠️ This app provides educational information only. "
+        "It does not diagnose diseases or replace professional medical care."
+    )
+
+    st.success(
+        "Use the sidebar menu to explore the AI Assistant, "
+        "Heart Health Awareness, and Emergency Information."
     )
 
 
+# AI Assistant
 elif page == "🤖 AI Assistant":
 
     st.title("🤖 AI Heart Health Assistant")
@@ -50,6 +63,16 @@ elif page == "🤖 AI Assistant":
                 model="openai/gpt-oss-20b",
                 messages=[
                     {
+                        "role": "system",
+                        "content": (
+                            "You are a heart health educational assistant. "
+                            "Provide clear, simple and safe health information. "
+                            "Do not diagnose diseases. "
+                            "If symptoms could indicate a medical emergency, "
+                            "clearly advise the user to seek immediate medical care."
+                        )
+                    },
+                    {
                         "role": "user",
                         "content": question
                     }
@@ -61,20 +84,24 @@ elif page == "🤖 AI Assistant":
             )
 
         else:
+
             st.warning(
                 "Please enter a question."
             )
 
 
+# Heart Health Awareness
 elif page == "📚 Heart Health Awareness":
 
     st.title("📚 Heart Health Awareness")
 
     st.write(
-        "Learn general information about heart health."
+        "Learn general information about heart health, "
+        "heart diseases, symptoms, risk factors and prevention."
     )
 
 
+# Emergency Information
 elif page == "🚨 Emergency Information":
 
     st.title("🚨 Emergency Information")
@@ -82,4 +109,10 @@ elif page == "🚨 Emergency Information":
     st.warning(
         "If someone has severe or sudden symptoms, "
         "seek immediate emergency medical help."
+    )
+
+    st.write(
+        "Examples of concerning symptoms may include "
+        "severe chest discomfort, severe difficulty breathing, "
+        "fainting, or sudden weakness."
     )
